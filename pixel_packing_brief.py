@@ -12,30 +12,54 @@
 # output : sequence of coded symbols
 
 
-import numpy as np
 import math
-x = input()
-x = x.split(' ')
-x = [int(symbol) for symbol in x]
 
-# getting unique symbols & sorting
-symbols = list(set(x))
-symbols.sort()
-print(f"Unique symbols : {symbols}")
 
-# 4. encode file
-indices = []
-codewords = []
-for i in range (len(x)):
-    for j in range(len(symbols)):
-        if x[i] == symbols[j]:
-            index = j
-            indices.append(index)
-            number_of_bits = math.ceil(math.log2(len(symbols)))
-            codeword = format(index, f"0{number_of_bits}b")
-            codewords.append(codeword)
 
-print(f"symbols indices : {indices}")
-print(f"symbols codewords : {codewords}")
+def pixel_packing_encode(x):
+
+    # getting unique symbols & sorting
+    symbols = list(set(x))
+    symbols.sort()
+
+    # 4. encode file
+    indices = []
+    codewords = []
+    for i in range (len(x)):
+        for j in range(len(symbols)):
+            if x[i] == symbols[j]:
+                index = j
+                indices.append(index)
+                number_of_bits = math.ceil(math.log2(len(symbols)))
+                codeword = format(index, f"0{number_of_bits}b")
+                codewords.append(codeword)
+    return symbols,indices,codewords
+
+def pixel_packing_decode(symbols, code_sequence):
+
+    seq_indices = [int(code, 2) for code in code_sequence]
+    # getting unique symbols & sorting
+    symbols = list(set(x))
+    symbols.sort()
+    
+    # decode file
+    original_seq = []
+    for index in seq_indices:
+        original_seq.append(symbols[index])
+    return original_seq
+
+if __name__ == "__main__":
+    x = input()
+    x = x.split(' ')
+    x = [int(symbol) for symbol in x]
+
+    symbols, indices , code_sequence = pixel_packing_encode(x)
+    print(f"Unique symbols : {symbols}")
+    print(f"symbols indices : {indices}")
+    print(f"Endoded symbols: {code_sequence}")
+
+
+    original_seq = pixel_packing_decode(symbols, code_sequence)
+    print(f"Decoded symbols : {original_seq}")
 
 
