@@ -1,5 +1,5 @@
 
-# Pixel packing
+# Pixel packing Encoding
 # input : sequence of symbols
 # Steps:
 #   1. get unique symbols
@@ -11,17 +11,12 @@
 #   6. write output as binary codes.
 # output : sequence of coded symbols
 
-
 import math
 
-
-
 def pixel_packing_encode(x):
-
     # getting unique symbols & sorting
     symbols = list(set(x))
     symbols.sort()
-
     # 4. encode file
     indices = []
     codewords = []
