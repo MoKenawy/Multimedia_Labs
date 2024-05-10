@@ -1,0 +1,15 @@
+digraph {
+	P3
+	t
+	P3 -> t
+	P2
+	P3 -> P2
+	P1
+	P2 -> P1
+	m
+	P1 -> m
+	p
+	P1 -> p
+	s
+	P2 -> s
+}
