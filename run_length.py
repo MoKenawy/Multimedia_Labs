@@ -18,6 +18,9 @@ def decompress_rle(compressed_text):
         decompressed_text += symbol * (length + 1)  # Increment length to match RLE format
     return decompressed_text
 
+
+
+
 if __name__ == "__main__":
 
     RUN_BITS = 2
