@@ -51,15 +51,22 @@ class HuffmanTree:
                 _show(node.right_child)
         _show(root)
     def construct_tree(self):
-        list = symbols_list
-        while len(list) > 1:
-            left_child = list.pop(0)
-            right_child = list.pop(0)
+
+        # priority_queue = self.symbols_list[:]  # Copy the list of symbols
+        heapq.heapify(self.symbols_list)
+
+        # list = symbols_list
+        while len(self.symbols_list) > 1:
+            # left_child = list.pop(0)
+            # right_child = list.pop(0)
+            left_child = heapq.heappop(self.symbols_list)
+            right_child = heapq.heappop(self.symbols_list)
             parent = Symbol(content= f"P{self.count}", freq= (left_child.freq + right_child.freq))
             parent.left_child = left_child
             parent.right_child = right_child
-            list.append(parent)
-            list.sort(key= lambda x: x.freq)
+            heapq.heappush(self.symbols_list,parent)
+            # list.append(parent)
+            # list.sort(key= lambda x: x.freq)
             self.count +=1
 
     def code_tree(self):
@@ -98,14 +105,25 @@ class HuffmanTree:
 
         return encoded
 
-    def encode(self,tree):
-        root = tree[0]
-        def _encode(node, symbol):
+    def encode(self,tree, data):
+        root = tree
+
+        def _encode_symbol(node, symbol, code = None):
             if node != None:
                 if symbol == node.content:
-                    return  node.code
-                _encode(node.left_child, symbol)
-                
+                    return node.code
+                left_code = _encode_symbol(node.left_child, symbol)
+                if left_code is not None:
+                    return left_code
+                right_code = _encode_symbol(node.right_child, symbol)
+                if right_code is not None:
+                    return right_code
+            
+        encoded = []
+        for symbol in data:
+            code = _encode_symbol(root,symbol)
+            encoded.append(code)
+        return encoded
     # def display_tree(self):
     #     root = symbols_list[0]
     #     self._display_tree(root)
@@ -140,20 +158,33 @@ class HuffmanTree:
     #     return h
 
 if __name__ == "__main__":
-    symbols = ['m','p','s','t']
+    # symbols = ['m','p','s','t']
+    # freq = [1,2,4,4]
+    # data = "mppstmt"
+
+
     # symbols = ['10','20',
     #         '25',
     #         '180',
     #         '200',
     #         '220',
     #         ]
-    freq = [1,2,4,4]
     #freq = [20,20,200,500,200,20,20,20]
 
-    data = "mppstmt"
-    symbols_list = []
-    for i in range(len(symbols)) :
-        symbols_list.append(Symbol(content=symbols[i], freq=freq[i]))
+    symbols = {
+        'a' : 3,
+        'c': 5,
+        'e':8,
+        'i':7,
+        'h':2
+
+    }
+    data = 'aaacceeeiiiccceeehheeiiii'
+    symbols_list = [Symbol(symbol_name, freq) for symbol_name, freq in symbols.items()]
+
+    # symbols_list = []
+    # for i in range(len(symbols)) :
+    #     symbols_list.append(Symbol(content=symbols[i], freq=freq[i]))
     
 
     huffman = HuffmanTree(symbols_list)
@@ -164,7 +195,8 @@ if __name__ == "__main__":
     #print(f"encoding table : {table}")
     
     huffman.show_list()
-    encoded = huffman.encode(data, table)
+    #encoded = huffman.encode_with_table(data, table)
+    encoded = huffman.encode(root, data)
     print(f"data: {data}")
     print(f"encoded data: {encoded}")
 
