@@ -14,7 +14,7 @@
 # heapq of () 
 
 import heapq
-import graphviz
+#import graphviz
 import os
 import sys
 sys.path.append("C:\\Python312\\Lib\\site-packages\\graphviz")
@@ -43,11 +43,13 @@ class HuffmanTree:
         self.symbols_list.sort(key= lambda x: x.freq)
     
     def show_list(self):
-        self.symbols_list = list(self.symbols_list)
-        for symbol in self.symbols_list:
-            symbol.display()
-
-
+        root = self.symbols_list[0]
+        def _show(node):
+            if node != None:
+                node.display()
+                _show(node.left_child)
+                _show(node.right_child)
+        _show(root)
     def construct_tree(self):
         list = symbols_list
         while len(list) > 1:
@@ -63,17 +65,19 @@ class HuffmanTree:
     def code_tree(self):
         root = symbols_list[0]
         root.code = ""
-        self.code_symbols(root)
-        return root
+        table = self.code_symbols(root,'')
+        return root, table
         
-    def code_symbols(self,root):
-        if root.left_child != None:
-            root.left_child.code = root.code + "0"
-            root.right_child.code = root.code + "1"
-
-            self.code_symbols(root.left_child)
-            self.code_symbols(root.right_child)
-
+    def code_symbols(self,root,code, table = []):
+        if root != None:
+            # root.left_child.code = root.code + "0"
+            # root.right_child.code = root.code + "1"
+            root.code = code
+            table.append((root.content , root.code))
+            
+            self.code_symbols(root.left_child, code + "0", table)
+            self.code_symbols(root.right_child, code + "1",table)
+        return table
     def _display_tree(self,root):
         if root:
             # First print the data of node
@@ -84,27 +88,44 @@ class HuffmanTree:
 
             # Finally recur on right child
             self._display_tree(root.right_child)
+
+    def encode_with_table(self, symbols, table):
+        encoded = []
+        for symbol in symbols:
+            for s, code in table:
+                if symbol == s:
+                    encoded.append(code)
+
+        return encoded
+
+    def encode(self,tree):
+        root = tree[0]
+        def _encode(node, symbol):
+            if node != None:
+                if symbol == node.content:
+                    return  node.code
+                _encode(node.left_child, symbol)
                 
-    def display_tree(self):
-        root = symbols_list[0]
-        self._display_tree(root)
+    # def display_tree(self):
+    #     root = symbols_list[0]
+    #     self._display_tree(root)
 
-    def visualize_binary_tree(self,root):
-        dot = graphviz.Digraph()
-        dot.node(str(root.content))
+    # def visualize_binary_tree(self,root):
+    #     dot = graphviz.Digraph()
+    #     dot.node(str(root.content))
 
-        def add_nodes_edges(node):
-            if node.left_child:
-                dot.node(str(node.left_child.content))
-                dot.edge(str(node.content), str(node.left_child.content))
-                add_nodes_edges(node.left_child)
-            if node.right_child:
-                dot.node(str(node.right_child.content))
-                dot.edge(str(node.content), str(node.right_child.content))
-                add_nodes_edges(node.right_child)
+    #     def add_nodes_edges(node):
+    #         if node.left_child:
+    #             dot.node(str(node.left_child.content))
+    #             dot.edge(str(node.content), str(node.left_child.content))
+    #             add_nodes_edges(node.left_child)
+    #         if node.right_child:
+    #             dot.node(str(node.right_child.content))
+    #             dot.edge(str(node.content), str(node.right_child.content))
+    #             add_nodes_edges(node.right_child)
 
-        add_nodes_edges(root)
-        dot.render('binary_tree', view=True, format='png')
+    #     add_nodes_edges(root)
+    #     dot.render('binary_tree', view=True, format='png')
 
 
     # def init_heap(self):
@@ -120,17 +141,30 @@ class HuffmanTree:
 
 if __name__ == "__main__":
     symbols = ['m','p','s','t']
+    # symbols = ['10','20',
+    #         '25',
+    #         '180',
+    #         '200',
+    #         '220',
+    #         ]
     freq = [1,2,4,4]
+    #freq = [20,20,200,500,200,20,20,20]
 
+    data = "mppstmt"
     symbols_list = []
     for i in range(len(symbols)) :
         symbols_list.append(Symbol(content=symbols[i], freq=freq[i]))
     
+
     huffman = HuffmanTree(symbols_list)
     
-    #huffman.show_list()
     huffman.sort_symbols()
     huffman.construct_tree()
-    root = huffman.code_tree()
-#    huffman.visualize_binary_tree(root)
-    huffman.display_tree()
+    root , table= huffman.code_tree()
+    #print(f"encoding table : {table}")
+    
+    huffman.show_list()
+    encoded = huffman.encode(data, table)
+    print(f"data: {data}")
+    print(f"encoded data: {encoded}")
+
