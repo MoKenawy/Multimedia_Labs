@@ -1,5 +1,6 @@
 ## input: data, source_stats
 ### steps:
+    #   additional : calculate probabilites
     #    1. Calculate cumulative
     #    2.for each symbol in source_stats
     #       2.1: calculate range
@@ -25,16 +26,15 @@ def arithmetic_encoding(data, source_stats):
     for i in range(len(source_stats)):
         source_stats[i][1] /= total_freq
 
+    # record : [symbol, prob, cumulative, start_range, end_range]
     # 1,2
     cumulative = 0
-    ranges = []
     for i in range(len(source_stats)):
         symbol = source_stats[i][0]
         prob = source_stats[i][1]
         start_range = cumulative
         cumulative += prob
         end_range = cumulative
-        ranges.append([start_range,end_range])
         source_stats[i].append(cumulative)
         source_stats[i].append(start_range)
         source_stats[i].append(end_range)

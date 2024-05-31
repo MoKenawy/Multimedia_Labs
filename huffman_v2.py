@@ -29,13 +29,13 @@ def build_codes( node, prefix="", code_book={}):
         build_codes(node.right, prefix + "1", code_book)
     return code_book
 
-def huffman_encode(data):
+def huffman_encode(data,source_stats):
     if not data:
         return "", None
-    frequencies = Counter(data)
-    tree = build_huffman_tree(frequencies)
+    tree = build_huffman_tree(source_stats)
     code_book = build_codes(tree)
-    encoded_output = ''.join(code_book[char] for char in data)
+    symbols = data.split(' ')
+    encoded_output = ''.join(code_book[char] for char in symbols)
     return encoded_output, tree
 
 def huffman_decode(encoded_data, tree):
@@ -48,10 +48,20 @@ def huffman_decode(encoded_data, tree):
         if node.char:
             decoded_output.append(node.char)
             node = tree
+            
     return ''.join(decoded_output)
 # Example
-data = "BCCADE"
-encoded_data, tree = huffman_encode(data)
+data = "A A A B C C D D E A A A"
+source_stats = {
+    'A': 0.16,
+    'B': 0.51,
+    'C': 0.9,
+    'D': 0.13,
+    'E': 0.11
+}
+
+
+encoded_data, tree = huffman_encode(data, source_stats)
 decoded_data = huffman_decode(encoded_data, tree)
 print("Original:", data)
 print("Encoded:", encoded_data)

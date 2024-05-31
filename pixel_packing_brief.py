@@ -20,12 +20,12 @@ def pixel_packing_encode(x):
     # 4. encode file
     indices = []
     codewords = []
+    number_of_bits = math.ceil(math.log2(len(symbols)))
     for i in range (len(x)):
         for j in range(len(symbols)):
             if x[i] == symbols[j]:
                 index = j
                 indices.append(index)
-                number_of_bits = math.ceil(math.log2(len(symbols)))
                 codeword = format(index, f"0{number_of_bits}b")
                 codewords.append(codeword)
     return symbols,indices,codewords

@@ -24,10 +24,10 @@ def decompress_rle(compressed_text):
 if __name__ == "__main__":
 
     RUN_BITS = 2
-    RUN_LENGTH = 2**RUN_BITS
+    RUN_LENGTH = (2**RUN_BITS) - 1
 
-    text = "AAABBBCCDAA"
-
+    #text = "AAABBBCCDAA"
+    text = "aaaaaaddddduuujjj"
     
     compressed_text = compress_rle(text,RUN_LENGTH)
     print("Compressed text:", compressed_text)
